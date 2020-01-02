@@ -20,7 +20,8 @@ class MemberProfile {
 	public static function postRenderTemplate(\XF\Template\Templater $templater, $type, $template, &$output) {
 
 		$hint = $type . ':' . $template;
-		$visitor = \XF::visitor();
+        $visitor = \XF::visitor();
+        
 		if ($hint == 'public:member_view') {
             
 			$userGroup = \XF::app()->finder('XF:UserGroup')->where('user_group_id', self::$user->display_style_group_id)->fetchOne();
@@ -29,7 +30,7 @@ class MemberProfile {
 			if ($visitor->user_id != self::$user->user_id 
 				&& $visitor->hasPermission('usernotes', 'user_notes_view')
 				&& $visitorGroup->display_style_priority > $userGroup->display_style_priority) {
-				$link = '<a href="' .\XF::app()->router()->buildLink('members/user-notes', self::$user) . '"
+				$link = '<a href="' . \XF::app()->router()->buildLink('members/user-notes', self::$user) . '"
 							class="tabs-tab"
 							id="user-notes"
 							role="tab">' . \XF::phrase('user_notes') . '</a>';
@@ -41,7 +42,11 @@ class MemberProfile {
                 $output = str_replace('<usernotetab />', $link, $output);
                 $output = str_replace('<usernotepanel />', $panel, $output);
 
-			}
+			} else {
+                
+                $output = str_replace('<usernotetab />', '', $output);
+                $output = str_replace('<usernotepanel />', '', $output);
+            }
 		}
 	}
 
