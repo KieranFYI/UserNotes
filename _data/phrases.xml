@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="hide" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Hide]]></phrase>
+  <phrase title="kieran_usernotes_hidden" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Hidden]]></phrase>
+  <phrase title="kieran_usernotes_message_required" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Message required]]></phrase>
+  <phrase title="kieran_usernotes_posted" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[A reply has been posted to a note you have commented on]]></phrase>
+  <phrase title="kieran_usernotes_reply" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[A reply has been posted to your note]]></phrase>
+  <phrase title="kieran_usernotes_view_note" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[View note]]></phrase>
+  <phrase title="permission.usernotes_user_notes_create" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Can create user notes]]></phrase>
+  <phrase title="permission.usernotes_user_notes_hidden" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Can create/view hidden user notes]]></phrase>
+  <phrase title="permission.usernotes_user_notes_view" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[View user notes]]></phrase>
+  <phrase title="permission_interface.usernotes" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[User notes]]></phrase>
+  <phrase title="post_note" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[Post note]]></phrase>
+  <phrase title="user_notes" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[User Notes]]></phrase>
+</phrases>

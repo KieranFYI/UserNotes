@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<code_event_listeners>
+  <listener event_id="dispatcher_match" execute_order="10" callback_class="Kieran\UserNotes\Events\MemberProfile" callback_method="routeMatch" active="1"/>
+  <listener event_id="templater_template_post_render" execute_order="10" callback_class="Kieran\UserNotes\Events\MemberProfile" callback_method="postRenderTemplate" active="1"/>
+  <listener event_id="templater_template_pre_render" execute_order="10" callback_class="Kieran\UserNotes\Events\MemberProfile" callback_method="preRenderTemplate" active="1"/>
+</code_event_listeners>

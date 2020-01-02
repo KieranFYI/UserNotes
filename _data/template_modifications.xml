@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <modification type="public" template="member_view" modification_key="kieran_usernotes_panel" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:tab_panes:end]-->]]></find>
+    <replace><![CDATA[<usernotepanel />
+$0]]></replace>
+  </modification>
+  <modification type="public" template="member_view" modification_key="kieran_usernotes_tab" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:tabs:end]-->]]></find>
+    <replace><![CDATA[<usernotetab />
+$0]]></replace>
+  </modification>
+</template_modifications>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="public" title="alert_usernotes_reply" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[{{ phrase('kieran_usernotes_reply') }}
+<a href="{{ link('user-notes', $content) }}">{{ phrase('kieran_usernotes_view_note') }}</a>]]></template>
+  <template type="public" title="kieran_usernotes_macro" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[<xf:macro name="reply"
+		  arg-canManage="{{ false }}">
+	<xf:js src="xf/message.js" min="1" />
+	<xf:css src="message.less" />
+	<div class="message-inner">
+		<div class="message-cell message-cell--user">
+			<xf:macro template="message_macros" name="user_info_simple" arg-user="{$xf.visitor}" />
+		</div>
+		<div class="message-cell message-cell--main">
+			<div class="message-editorWrapper">
+				<xf:textarea name="message" autosize="true" rows="1"
+							 class="input--avatarSizeS js-editor"
+							 data-xf-init="focus-trigger user-mentioner" />
+
+				<div class="u-inputSpacer">
+					<xf:if is="$canManage">
+						<xf:checkbox >
+							<xf:option name="hidden" value="1" label="{{ phrase('kieran_usernotes_hidden') }}"/>
+						</xf:checkbox>
+					</xf:if>
+					<xf:button type="submit" class="button--primary">{{ phrase('post_verb') }}</xf:button>
+				</div>
+			</div>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro name="view"
+		  arg-note="!"
+		  arg-canCreate="{{ false }}"
+		  arg-canViewHidden="{{ false }}">
+	<article class="message message--simple {{ $note.visible ? '' : 'message--hidden' }}" id="note-{$note.note_id}">
+		<div class="message-inner">
+			<div class="message-cell message-cell--user">
+				<xf:macro template="message_macros" name="user_info_simple" arg-user="{$note.Creator}" />
+			</div>
+			<div class="message-cell message-cell--main">
+				<div class="message-content">
+					<header class="message-attribution message-attribution--plain">
+						<ul class="listInline listInline--bullet">
+							<li class="message-attribution-user">
+								<xf:avatar user="$note.Creator" size="xxs" />
+								<h4 class="attribution"><xf:username user="$note.Creator" rich="true" /></h4>
+							</li>
+							<li><xf:date time="$note.timestamp" /></li>
+						</ul>
+					</header>
+
+					<article class="message-body">
+						{$note.note}
+
+						<xf:foreach loop="$note.data" key="$key" value="$value">
+							<dl class="pairs pairs--columns pairs--fixedSmall">
+								<dt>{$key}</dt>
+								<dd>{$value}</dd>
+							</dl>
+						</xf:foreach>
+					</article>
+
+					<footer class="message-footer">
+						<div class="message-actionBar actionBar">
+							<xf:if contentcheck="true">
+								<div class="actionBar-set actionBar-set--external">
+									<xf:contentcheck>
+										<xf:if is="$canCreate">
+											<a class="actionBar-action actionBar-action--reply"
+											   data-xf-click="toggle"
+											   data-target=".js-userNoteTarget-{$note.note_id}"
+											   data-scroll-to="true"
+											   role="button"
+											   tabindex="0">{{ phrase('comment') }}</a>
+										</xf:if>
+									</xf:contentcheck>
+								</div>
+							</xf:if>
+
+							<xf:if contentcheck="true">
+								<div class="actionBar-set actionBar-set--internal">
+									<xf:contentcheck>
+										<xf:if is="$canViewHidden && $note.visible">
+											<a href="{{ link('user-notes/hide', $note) }}"
+											   class="actionBar-action actionBar-action--delete actionBar-action--menuItem" >{{ phrase('hide') }}</a>
+										</xf:if>
+										<xf:if is="$canViewHidden && !$note.visible">
+											<a href="{{ link('user-notes/show', $note) }}"
+											   class="actionBar-action actionBar-action--delete actionBar-action--menuItem" >{{ phrase('show') }}</a>
+										</xf:if>
+									</xf:contentcheck>
+								</div>
+							</xf:if>
+						</div>
+						<section class="message-responses js-messageResponses">
+							<xf:if is="$note.LatestComments is not empty">
+								<xf:if is="$note.hasMoreComments()">
+									<div class="message-responseRow u-jsOnly js-commentLoader">
+										<a href="{{ link('user-notes/load-previous', $note, {'before': $note.LatestComments.first().timestamp}) }}"
+										   data-xf-click="comment-loader"
+										   data-container=".js-commentLoader"
+										   rel="nofollow">{{ phrase('view_previous_comments...') }}</a>
+									</div>
+								</xf:if>
+								<div class="js-replyNewMessageContainer">
+									<xf:foreach loop="$note.LatestComments" value="$comment">
+										<xf:macro
+												  name="comment"
+												  arg-comment="{$comment}"
+												  arg-parent="{$note}"
+												  arg-canViewHidden="{$canViewHidden}"/>
+									</xf:foreach>
+								</div>
+							<xf:else />
+								<div class="js-replyNewMessageContainer"></div>
+							</xf:if>
+
+							<xf:if is="$canCreate">
+								<xf:js src="xf/message.js" min="1" />
+								<div class="message-responseRow js-userNoteTarget-{$note.note_id} toggleTarget">
+									<xf:form action="{{ link('user-notes/add-comment', $note) }}" ajax="true" class="comment"
+											 data-xf-init="quick-reply"
+											 data-message-container="< .js-messageResponses | .js-replyNewMessageContainer">
+										<div class="comment-inner">
+											<span class="comment-avatar">
+												<xf:avatar user="{$xf.visitor}" size="xxs" />
+											</span>
+											<div class="comment-main">
+												<xf:textarea name="message" rows="1" autosize="true"
+															 class="comment-input js-editor"
+															 data-xf-init="user-mentioner"
+															 data-toggle-autofocus="1"
+															 placeholder="{{ phrase('write_comment...') }}" />
+												<div>
+													<xf:button type="submit" class="button--primary button--small">
+														{{ phrase('post_comment') }}
+													</xf:button>
+												</div>
+											</div>
+										</div>
+										<xf:set var="$lastComment" value="{$note.LatestComments|last}" />
+										<xf:hiddenval name="last_date">{$lastComment.timestamp}</xf:hiddenval>
+									</xf:form>
+								</div>
+							</xf:if>
+						</section>
+					</footer>
+				</div>
+			</div>
+		</div>
+	</article>
+</xf:macro>
+
+<xf:macro name="comment"
+		  arg-comment="!"
+		  arg-canViewHidden="{{ false }}">
+
+	<div class="message-responseRow {{ $comment.visible ? '' : 'message-responseRow--hidden' }}" id="note-{$comment.note_id}">
+		<div class="comment"
+			 data-author="{$comment.Creator.username}">
+
+			<div class="comment-inner">
+				<span class="comment-avatar">
+					<xf:avatar user="$comment.Creator" size="xxs" />
+				</span>
+				<div class="comment-main">
+					<div class="comment-content">
+						<div class="comment-contentWrapper">
+							<xf:username user="$comment.Creator" rich="true" class="comment-user" />
+							<article class="comment-body">{{ structured_text($comment.note) }}</article>
+						</div>
+					</div>
+					<footer class="comment-footer">
+						<div class="comment-actionBar actionBar">
+							<div class="actionBar-set actionBar-set--internal">
+								<span class="actionBar-action"><xf:date time="{$comment.timestamp}" /></span>
+								<xf:if is="$canViewHidden && $comment.visible">
+									<a href="{{ link('user-notes/hide', $comment) }}"
+									   class="actionBar-action actionBar-action--delete actionBar-action--menuItem" >{{ phrase('hide') }}</a>
+								</xf:if>
+								<xf:if is="$canViewHidden && !$comment.visible">
+									<a href="{{ link('user-notes/show', $comment) }}"
+									   class="actionBar-action actionBar-action--delete actionBar-action--menuItem" >{{ phrase('show') }}</a>
+								</xf:if>
+							</div>
+						</div>
+					</footer>
+				</div>
+			</div>
+		</div>
+	</div>
+</xf:macro>]]></template>
+  <template type="public" title="kieran_usernotes_new_user_notes" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[<xf:foreach loop="$notes" value="$note">
+	<xf:macro template="kieran_usernotes_macro" name="view"
+			  arg-note="{$note}"
+			  arg-canCreate="{$canCreate}"
+			  arg-canViewHidden="{$canViewHidden}" />
+</xf:foreach>]]></template>
+  <template type="public" title="kieran_usernotes_user_notes" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[<xf:title>{{ phrase('user_notes:') }} {{ $user.username }}</xf:title>
+<xf:breadcrumb href="{{ link('members', $user) }}">{{ $user.username }}</xf:breadcrumb>
+
+<xf:css src="kieran_usernotes_user_notes.less" />
+
+<xf:css src="message.less" />
+<xf:js src="xf/comment.js" min="1" />
+
+<div class="block block--messages">
+	<div class="block-container">
+		<div class="block-body js-replyNewMessageContainer">
+			<xf:if is="$canCreate">
+				<xf:form action="{{ link('members/user-notes/reply', $user) }}"
+						 ajax="true"
+						 class="message message--simple js-quickReply"
+						 data-xf-init="quick-reply" 
+						 data-message-container="< .js-replyNewMessageContainer"
+						 data-ascending="0">
+					
+					<xf:macro template="kieran_usernotes_macro" name="reply"
+							  arg-attachmentData="{$attachmentData}"
+							  arg-messageSelector=".js-message"
+							  arg-showPreviewButton="{{ false }}"
+							  arg-canManage="{$canViewHidden}"/>
+					
+					<xf:set var="$lastNote" value="{$notes|first}" />
+					<xf:hiddenval name="last_date">{$lastNote.timestamp}</xf:hiddenval>
+				</xf:form>
+			</xf:if>
+			<xf:foreach loop="$notes" value="$note">
+				<xf:macro template="kieran_usernotes_macro" name="view"
+						  arg-note="{$note}"
+						  arg-canCreate="{$canCreate}"
+						  arg-canViewHidden="{$canViewHidden}"/>
+			</xf:foreach>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="kieran_usernotes_user_notes.less" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[.message {
+	&--hidden {
+		
+		.message-inner {
+			background-color: #ffd0cb;
+		}
+
+		.message-userArrow::after {
+			border-right-color: #ffd0cb;	
+		}
+	}
+}
+.message-responseRow.message-responseRow {
+	&--hidden {
+		background-color: #ffa5a5;
+	}
+}]]></template>
+  <template type="public" title="kieran_usernotes_user_notes_comments" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[<xf:head option="metaNoindex"><meta name="robots" content="noindex" /></xf:head>
+
+<xf:if is="$loadMore">
+	<div class="message-responseRow js-commentLoader">
+		<a href="{{ link('user-notes/load-previous', $note, {'before': $firstCommentDate}) }}"
+			data-xf-click="comment-loader"
+			data-container=".js-commentLoader"
+			rel="nofollow">{{ phrase('view_previous_comments...') }}</a>
+	</div>
+</xf:if>
+
+<xf:foreach loop="$comments" value="$comment">
+	<xf:macro template="kieran_usernotes_macro" name="comment"
+		arg-comment="{$comment}" />
+</xf:foreach>]]></template>
+  <template type="public" title="kieran_usernotes_user_notes_new_comments" version_id="1000000" version_string="1.0.0 Alpha"><![CDATA[<xf:foreach loop="$comments" value="$comment">
+	<xf:macro template="kieran_usernotes_macro" name="comment"
+			  arg-comment="{$comment}"
+			  arg-canViewHidden="{$canViewHidden}" />
+</xf:foreach>]]></template>
+</templates>
