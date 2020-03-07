@@ -56,22 +56,14 @@ class Member extends \XF\Pub\Controller\AbstractController
 		}
 
 		if ($this->filter('_xfWithData', 'bool') && $this->request->exists('last_date')) {
-
-			$notes = $this->finder('Kieran\UserNotes:UserNote')
-				->where('parent_id', 0)
-				->where('timestamp', '>', $this->filter('last_date', 'uint'))
-				->order('timestamp', 'ASC')
-				->fetch()
-				->reverse();
-
-
+			
 			$viewParams = [
-				'notes' => $notes,
+				'notes' => $this->getUserNotesRepo()->getNotes($user->user_id, $visitor->hasPermission('usernotes', 'user_notes_hidden'), $this->filter('last_date', 'uint')),
 				'canCreate' => $visitor->hasPermission('usernotes', 'user_notes_create'),
 				'canViewHidden' => $visitor->hasPermission('usernotes', 'user_notes_hidden'),
 			];
 			$view = $this->view('Kieran\UserNotes:UserNotes\AddComment', 'kieran_usernotes_new_user_notes', $viewParams);
-			$view->setJsonParam('lastDate', $notes->last()->timestamp);
+			$view->setJsonParam('lastDate', $viewParams['notes']->last()->timestamp);
 			return $view;
 		} else {
 			return $this->redirect($this->router()->buildLink('members/user-notes', $user));
